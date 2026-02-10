@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Special Valentine's Quiz 💝</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #764ba2;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .question-container {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .question-container.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .question h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+        
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .option-btn {
+            background: white;
+            border: 2px solid #ddd;
+            padding: 15px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1em;
+            text-align: left;
+        }
+        
+        .option-btn:hover {
+            border-color: #764ba2;
+            background: #f0f0f0;
+        }
+        
+        .option-btn.correct {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+        
+        .option-btn.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            animation: shake 0.5s;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        .progress {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s;
+        }
+        
+        .final-question {
+            text-align: center;
+            display: none;
+        }
+        
+        .final-question.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .final-question h2 {
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+        
+        .hearts {
+            font-size: 3em;
+            margin-bottom: 20px;
+        }
+        
+        .valentine-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            cursor: pointer;
+            transition: transform 0.3s;
+            box-shadow: 0 10px 30px rgba(118, 75, 162, 0.3);
+        }
+        
+        .valentine-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .fake-no {
+            background: #e9ecef;
+            color: #999;
+            margin-left: 15px;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .celebration {
+            display: none;
+            text-align: center;
+        }
+        
+        .celebration.active {
+            display: block;
+            animation: fadeIn 0.5s;
+        }
+        
+        .celebration h2 {
+            color: #764ba2;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        
+        .celebration p {
+            font-size: 1.3em;
+            color: #666;
+        }
+        
+        .message {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💝 A Special Valentine's Quiz 💝</h1>
+            <p>Answer these questions to unlock a special message...</p>
+        </div>
+        
+        <div class="progress">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <!-- Question 1 -->
+        <div class="question-container active" id="q1">
+            <div class="question">
+                <h3>Question 1: Which year did you meet me?</h3>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer(1, '2018', this)">2018</button>
+                    <button class="option-btn" onclick="checkAnswer(1, '2019', this)">2019</button>
+                    <button class="option-btn" onclick="checkAnswer(1, '2022', this)">2022</button>
+                    <button class="option-btn" onclick="checkAnswer(1, '2023', this)">2023</button>
+                    <button class="option-btn" onclick="checkAnswer(1, '2025', this)">2025</button>
+                </div>
+            </div>
+            <div id="msg1"></div>
+        </div>
+        
+        <!-- Question 2 -->
+        <div class="question-container" id="q2">
+            <div class="question">
+                <h3>Question 2: What's my favorite color?</h3>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer(2, 'Green', this)">Green</button>
+                    <button class="option-btn" onclick="checkAnswer(2, 'Pink', this)">Pink</button>
+                    <button class="option-btn" onclick="checkAnswer(2, 'Blue', this)">Blue</button>
+                    <button class="option-btn" onclick="checkAnswer(2, 'Purple', this)">Purple</button>
+                </div>
+            </div>
+            <div id="msg2"></div>
+        </div>
+        
+        <!-- Question 3 -->
+        <div class="question-container" id="q3">
+            <div class="question">
+                <h3>Question 3: When did you propose to me?</h3>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer(3, '2021', this)">2021</button>
+                    <button class="option-btn" onclick="checkAnswer(3, '2022', this)">2022</button>
+                    <button class="option-btn" onclick="checkAnswer(3, '2023', this)">2023</button>
+                    <button class="option-btn" onclick="checkAnswer(3, '2024', this)">2024</button>
+                </div>
+            </div>
+            <div id="msg3"></div>
+        </div>
+        
+        <!-- Question 4 -->
+        <div class="question-container" id="q4">
+            <div class="question">
+                <h3>Question 4: What's my favorite food?</h3>
+                <div class="options">
+                    <button class="option-btn" onclick="checkAnswer(4, 'Panipuri', this)">Panipuri</button>
+                    <button class="option-btn" onclick="checkAnswer(4, 'Pizza', this)">Pizza</button>
+                    <button class="option-btn" onclick="checkAnswer(4, 'Biryani', this)">Biryani</button>
+                    <button class="option-btn" onclick="checkAnswer(4, 'Chocolate', this)">Chocolate</button>
+                </div>
+            </div>
+            <div id="msg4"></div>
+        </div>
+        
+        <!-- Final Question -->
+        <div class="final-question" id="finalQuestion">
+            <div class="hearts">💖💝💕</div>
+            <h2>Will you be my Valentine?</h2>
+            <div style="margin-top: 30px;">
+                <button class="valentine-btn" onclick="celebrate()">Yes! 💕</button>
+                <button class="valentine-btn fake-no" disabled title="This option is not available 😉">No</button>
+            </div>
+        </div>
+        
+        <!-- Celebration -->
+        <div class="celebration" id="celebration">
+            <div style="font-size: 4em; margin-bottom: 20px;">🎉💖🎊</div>
+            <h2>Yay! 💝</h2>
+            <p>I love you so much!</p>
+            <p style="margin-top: 20px; font-size: 1.5em;">Happy Valentine's Day! ❤️</p>
+        </div>
+    </div>
+    
+    <script>
+        const answers = {
+            1: '2018',
+            2: 'Purple',
+            3: '2022',
+            4: 'Biryani'
+        };
+        
+        let currentQuestion = 1;
+        
+        function checkAnswer(questionNum, answer, button) {
+            const buttons = button.parentElement.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.style.pointerEvents = 'none');
+            
+            const msgDiv = document.getElementById('msg' + questionNum);
+            
+            if (answer === answers[questionNum]) {
+                button.classList.add('correct');
+                msgDiv.innerHTML = '<div class="message success">Correct! ✓</div>';
+                
+                setTimeout(() => {
+                    document.getElementById('q' + questionNum).classList.remove('active');
+                    currentQuestion++;
+                    updateProgress();
+                    
+                    if (currentQuestion <= 4) {
+                        document.getElementById('q' + currentQuestion).classList.add('active');
+                    } else {
+                        document.getElementById('finalQuestion').classList.add('active');
+                    }
+                }, 1000);
+            } else {
+                button.classList.add('wrong');
+                msgDiv.innerHTML = '<div class="message error">Oops! Try again 💭</div>';
+                
+                setTimeout(() => {
+                    button.classList.remove('wrong');
+                    buttons.forEach(btn => btn.style.pointerEvents = 'auto');
+                    msgDiv.innerHTML = '';
+                }, 1500);
+            }
+        }
+        
+        function updateProgress() {
+            const progress = ((currentQuestion - 1) / 4) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+        
+        function celebrate() {
+            document.getElementById('finalQuestion').classList.remove('active');
+            document.getElementById('celebration').classList.add('active');
+            
+            // Create floating hearts
+            for (let i = 0; i < 20; i++) {
+                setTimeout(() => createHeart(), i * 200);
+            }
+        }
+        
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '❤️';
+            heart.style.position = 'fixed';
+            heart.style.left = Math.random() * 100 + '%';
+            heart.style.top = '100%';
+            heart.style.fontSize = Math.random() * 30 + 20 + 'px';
+            heart.style.animation = 'float 4s ease-in-out';
+            heart.style.zIndex = '1000';
+            document.body.appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 4000);
+        }
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes float {
+                to {
+                    transform: translateY(-100vh) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        updateProgress();
+    </script>
+</body>
+</html>
